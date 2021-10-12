@@ -1,0 +1,264 @@
+Docker 
+------
+
+Microservices -  Kubernetes 
+
+Application Deployment 
+	We deploy the build output of the application 
+	
+	Angular :- Set of JS, HTML, CSS, json ......
+				ng build --prod
+				
+	.Net Core :- exe(s),dll(s),appsetting.json ....
+				dotnet publish(cli) , Publish Project using Visual Studio
+				
+	Java :- jar,war
+				jar command to create jar files 
+				
+	Problem in Application Deployment 
+	
+		a. Client ---> give me the build output for deployment 
+		b. Client ---> deploy the application to the production env (VM)
+		
+	Expectation :
+		The app must work exactly in the same manner in the PROD env as it was working in the DEV env 
+		
+	Do you meet expectation 
+		NO/YES/NOT Sure 
+		
+	Reasons for not working in Prod env
+	
+		-The required app configuration may have to done again on the PROD env
+		-The required runtime version may be different than that of the development runtime
+		-The required runtime env may not be available on the client machince
+		
+	CONTAINER 
+		Products 
+		
+		Products to be transported ---> the build output of your app
+		Transportation mechanism ---> PROD Infra/env
+		Container 				 ---> Docker 
+		
+	Docker container packages the app (build output) and its dependencies for its execution	
+		
+	Tools 
+	-----
+	github account 
+	Linux/Ubuntu VM with Docker Installed (Cloud)
+	SSH Client (Putty or Mobaxterm or cmd) (on prem machine)
+	Visual Studio (on-prem machine)
+	
+	What is a Container ?
+	----------------------
+	It is a standardized unit of software
+	
+	A Package of code and dependencies to run that code 
+		eg 
+			NodeJS Code + NodeJS Runtime 
+			.Net Core Code + .Net Core Runtime
+			
+	Docker use OS Virtualization 
+		Linux Namespace and Control Groups 
+		
+		
+Traditional Deployment Techniquies
+----------------------------------
+Purchase or Rent a Server to deploy the application 
+One Server - One Application
+
+-Cost Increased (Purchase or RENT of Server, OS License, People for Managing them..)
+			-Upfront Capex (Capital Expenditure)
+			-Onging Opex (Operational Expenditure)
+-Underutilized Hardware
+			20% is used
+			80% is wasted or not utilized
+			
+Solution : Virtualization
+Hypervisior : It's a piece of software to achieve virtualization of H/W
+Tools : VMWare, Virtual Box , Hyper-V etc....
+Virtualization of H/W means virtualizing CPU,RAM , Storage etc....
+
+Problem with VM 
+---------------
+-Heavy weight 
+-Takes time to start 
+-Maintenance 
+
+In how many section your RAM is divided ? - 2 Section 
+
+Kernel Space :- All OS related processes
+Application or User Space :- All application executed by the user
+
+Containerization :-
+-------------------
+It is process of Virtualization of OS 
+There are many companies that provides containerization
+
+	Docker 
+
+Container Architecture 
+----------------------
+One OS - Faster Application Deployment
+Light-weight - Takes less space as compared to VM 
+More Free Space - More Application can be deployment 
+Spin up time is very less 
+Container runs in user space 
+Every Container will have their own OS,FileSystem,Networks , Volumes etc...
+
+	NodeJS - App
+	NodeJs Runtime - Dependencies 
+	OS 
+	
+	Linux  - Linux OS (Server, Client)
+	Windows - Window OS (Server , Client)
+	
+	Tools 
+	-----
+	Local System (Linux)
+	Docker for Desktop (Windows and MacOs)
+	Cloud - VM
+	
+	SSH Client 
+	
+	Putty 
+	Mobaxterm 
+	cmd 
+	
+	Installing Docker 
+	-----------------
+	Change user to su (sudo su)
+	
+	apt-get update :- install any updates available
+	
+	apt install docker.io -y
+	
+	
+	Docker Server - (dockerd.exe) (Docker Daemon)
+	Rest API 
+	Docker Client (CLI) 
+	
+	Docker Registery (docker hub)
+	
+	docker commands
+	---------------
+	docker version - returns the version of docker installed on system 
+	docker info - display system-wide information 
+	docker system df - show dockers disk usage 
+	
+	docker pull <imagename>:<tagname> -  Pulls an image with the specified tagname
+	
+	docker run <imagename>:<tagname> - create a container based on image and specified tagname
+
+
+	docker run hello-world 
+	
+	docker images 
+	docker image ls - List all the images downloaded locally
+	
+	docker image rm <imagename>:<tagname> - removes the image
+	
+	docker inspect <imagename> - details of the image 
+	
+	docker image build - Build a image from a DockerFile
+	
+	docker image history - show history of an image 
+	
+	docker image prune - remove unused images
+	
+	docker container run <imagename>:<tag>
+	docker run <imagename>:<tagname> - to start a container from an image
+	
+		--name :- to provie a name to the container 
+		-d :- to run container in detached mode 
+		-p :- to specify port mapping 
+		
+	docker container logs <containername> - Fetch the logs of container
+	
+	docker container start <containername> - start a stopped container 
+	
+	docker container stop <containername> - stop a container 
+	
+	docker container rm <containername> - remove one or more container
+	
+	docker ps - to list all the running containers
+	
+	docker ps -a - to list all the container(running and stoppped)
+	
+	docker run nginx - create a container and runs it without port mapping
+	
+	docker run -p 80:80 nginx - create a container with port mapping 
+	
+	docker run -d -p 80:80 --name mynginx nginx - create a container with port mapping,name and in detached mode 
+	
+	To detach from the container :- CTRL+PQ
+	
+	The following creates container and as soon as the container is stopped it is removed from the system 
+	
+	docker run -it --rm ubuntu
+	
+	Images 
+	------
+	-Pre-Build Images  - docker hub 
+	-Custom Images 
+	
+	Custom Images 
+	--------------
+	Custom Images will contain our application code,reuired runtime or binaries and it may also contains some part of OS
+	
+	Dockerfile 
+	----------
+	DockerFile is the building block of the Docker images and container
+	It consist of list of commands the Docker engine uses to create a image and later create a container from the image 
+	It contains text instruction for building images 
+	All the instruction are read by the docker build command to create a image 
+	All the command are in UPPERCASE and executed in top to bottom approach 
+	
+	Dockerfile Commands
+	-------------------
+	FROM :- its is used to specify the base image 
+	eg:- 
+		FROM node
+		FROM alpine
+		FROM mcr.microsoft.com/dotnet/sdk:3.1
+		
+	LABEL :- It is used to provide information about the image like creation date,author,version number etc 
+	It display the information in key-value pair
+	eg :- 
+		LABEL "maintainer":"Vijay V"
+		LABEL "version":"1.9"
+	
+	RUN :- It is used to execute any command in a new layer on top of the current image and commit results
+	eg :- 
+		RUN apt-get update 
+		RUN apt install mysql -y
+		RUN npm install 
+		
+	CMD :- It is used to run the software/application contained by your image, along with arguments
+	eg:- 
+		CMD ["dotnet","demoapp.dll"]
+		
+	EXPOSE :- To expose a port number
+	eg:- 
+		EXPOSE 80
+		EXPOSE 4200
+		EXPOSE 1433
+		
+	ENV :- To specify software enviornment
+	
+	WORKDIR :- To specify the working dir of your image 
+	
+	COPY :- It is used to copy file in the image to specific folder
+	
+	ENTRYPOINT :- It is used to configure a container that will run as executable 
+	
+	Building Custom Images 
+	
+	1)Create a Simple Image (Ubuntu + Apache)
+	
+	2)Create a Node JS Application Image 
+	
+	3)Create a Angular App Image 
+	
+	4)Create a Asp.Net Core Web API Image 
+	
+	Pushing Image to the docker hub
